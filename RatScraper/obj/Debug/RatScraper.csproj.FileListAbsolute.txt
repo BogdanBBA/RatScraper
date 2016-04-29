@@ -1,0 +1,9 @@
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\bin\Debug\RatScraper.exe.config
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\bin\Debug\RatScraper.exe
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\bin\Debug\RatScraper.pdb
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.FMain.resources
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.Properties.Resources.resources
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.csproj.GenerateResource.Cache
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.exe
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.pdb
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.csprojResolveAssemblyReference.cache

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee</title>
+        <meta name="description" content="Brasov Ghid Trasee programe orare autobuze RAT Brasov ore de sosire in statii a autobuzelor transport Urban Brasov si traseu Poiana Brasov planificare calatorii harta liniilor traseelor harta Brasovului Oneves Carrefour Metro Selgros Auchan MALL comerciale">
+        <meta name="keywords" content="programe ghid trasee orare informatii ore autobuze turist info planificari calatorii trasee">
+        <link rel="stylesheet" type="text/css" href="/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/js/slick/slick.css"/>
+        <link rel="stylesheet" type="text/css" href="/js/dd.css" />
+        <link rel="stylesheet" href="/js/lightbox.css">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel="stylesheet" type="text/css">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>        
+        <script type="text/javascript" src="/js/slick/slick.min.js"></script>
+        <script src="/js/jquery.dd.js"></script>
+            </head>
+    <body>        
+        <div class="butoane-laterale">
+                        <a href="/contact/" class="buton-lateral">CONTACT</a>
+                        <a href="/sugestii/" class="buton-lateral">Sugestii</a>
+                        <a href="/sondaj-de-opinie/" class="buton-lateral">Sondaj de opinie</a>
+                                    
+        </div>
+        <div class="wrapper">
+            <div class="container header">
+                <div class="box logo">
+                    <a href="/" title="Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee">Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee</a>
+                </div>
+                <div class="box cautare">
+                    <form method="get" action="/search.php">
+                        <input type="text" value="Cautare rapida" name="q" onblur="if(value=='') value = 'Cautare rapida'" onfocus="if(value=='Cautare rapida') value = ''">
+                        <button type="submit" class="submit">&#xf002;</button>
+                    </form>
+                </div>
+                <div class="box selecteaza-limba">
+                    <a href="/language.php?code=en" class="en">English</a>
+                    <a href="/language.php?code=ro" class="ro">Romana</a>
+                    <select name="limba" id="limba" style="width:100px;" data-maincss="blue">
+                        <option value="">Alta limba</option>
+                                                                                                                                                            <option value="/language.php?code=de" >Deutsch</option>                                                    <option value="/language.php?code=hu" >Magyar</option>                                                    <option value="/language.php?code=fr" >Francais</option>                                            </select>
+                    <script>
+                        
+                            $(document).ready(function(e) {		
+                                $("select").msDropdown({roundedBorder:false});                                
+                                $("#limba").change(function(){
+                                    window.location = $("#limba option:selected").attr('value');        
+                                });
+                                
+                                $('#newsletter').bind('submit', function () {
+                                    var email_pattern = new RegExp("^[0-9A-Za-z_.-]+@[A-Za-z0-9_.-]+[.]+[A-Za-z]{2,4}$", "i");
+                                    if (!$('input[name=newsletter_email]').val()) {
+                                        alert('Completati adresa de email!');
+                                        return false
+                                    } else if (!email_pattern.test($('input[name=newsletter_email]').val())) {
+                                        alert('Adresa de email nu este corecta!');
+                                        return false
+                                    }
+                                    $.ajax({
+                                        'url': '/ajax/newsletter.php',
+                                        'data': {
+                                            'email': $('input[name=newsletter_email]').val()
+                                        },
+                                        'type': 'POST',
+                                        'success': function (response) {
+                                            alert(response)
+                                        },
+                                        'async': false
+                                    });
+                                    $('input[name=newsletter_email]').val($('input[name=newsletter_email]').attr('title'));
+                                    return false
+                                });
+                            });
+                        
+                    </script>
+                </div>
+                <div class="box social-top">
+                    <a href="">&#xf081;</a>
+                    <a href="">&#xf082;</a>
+                    <a href="#">&#xf166;</a>
+                </div>
+                <div class="clear"></div>
+
+                        <div class="meniu cf">
+                <ul>
+                                                                        <li><a href="/" title="HOME">HOME</a></li>
+                                                                                                <li>
+                                                                    <a href="/rat-brasov/" title="R.A.T. BRASOV">R.A.T. BRASOV</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/istoric/" title="Istoric">Istoric</a></li>
+                                                                            <li><a href="/conducerea-rat-brasov/" title="Conducerea R.A.T. Brasov">Conducerea R.A.T. Brasov</a></li>
+                                                                            <li><a href="/consiliul-de-administratie/" title="Consiliul de Administratie">Consiliul de Administratie</a></li>
+                                                                            <li><a href="/proiecte/" title="Proiecte">Proiecte</a></li>
+                                                                            <li><a href="/achizitii-si-licitatii/" title="Achizitii si licitatii">Achizitii si licitatii</a></li>
+                                                                            <li><a href="/parteneriate/" title="Parteneriate">Parteneriate</a></li>
+                                                                            <li><a href="/reglementari/" title="Reglementari">Reglementari</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/politica-noastra/" title="Politica Noastra">Politica Noastra</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/declaratia-de-politica/" title="Declaratia de politica">Declaratia de politica</a></li>
+                                                                            <li><a href="/certificari/" title="Certificari">Certificari</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/trasee-si-orare/" title="Trasee si orare">Trasee si orare</a>
+                                                                
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/tarife/" title="Tarife">Tarife</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/tarife-bilete-si-abonamente/" title="Tarife bilete si abonamente">Tarife bilete si abonamente</a></li>
+                                                                            <li><a href="/retea-distributie-bilete-si-abonamente/" title="Retea distributie bilete si abonamente">Retea distributie bilete si abonamente</a></li>
+                                                                            <li><a href="/automate-de-vanzare-titluri-calatorie/" title="Automate de vanzare titluri calatorie">Automate de vanzare titluri calatorie</a></li>
+                                                                            <li><a href="/reduceri-si-gratuitati/" title="Reduceri si Gratuitati">Reduceri si Gratuitati</a></li>
+                                                                            <li><a href="/contraventii-si-sanctiuni/" title="Contraventii si Sanctiuni">Contraventii si Sanctiuni</a></li>
+                                                                            <li><a href="/instructiuni-bilete-si-abonamente/" title="Instructiuni Bilete si Abonamente">Instructiuni Bilete si Abonamente</a></li>
+                                                                            <li><a href="/arondarea-strazilor-dl-118-l189/" title="Arondarea strazilor DL 118, L189">Arondarea strazilor DL 118, L189</a></li>
+                                                                            <li><a href="/intrebari-frecvente-bilet-valabil-50-min/" title="Intrebari frecvente - bilet valabil 50 min">Intrebari frecvente - bilet valabil 50 min</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/informatii-utile/" title="Informatii utile">Informatii utile</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/campanii/" title="Campanii">Campanii</a></li>
+                                                                            <li><a href="/evenimente/" title="Evenimente">Evenimente</a></li>
+                                                                            <li><a href="/informatii-turisti/" title="Informaţii turişti">Informaţii turişti</a></li>
+                                                                            <li><a href="/cariere/" title="Cariere">Cariere</a></li>
+                                                                            <li><a href="/siguranta-circulatiei/" title="SIGURANTA CIRCULATIEI">SIGURANTA CIRCULATIEI</a></li>
+                                                                            <li><a href="/discount/" title="DISCOUNT">DISCOUNT</a></li>
+                                                                            <li><a href="/intrebari-frecvente/" title="Intrebari frecvente">Intrebari frecvente</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/servicii/" title="Servicii">Servicii</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/inspectie-tehnica-periodica-itp/" title="Inspectie Tehnica Periodica (I.T.P)">Inspectie Tehnica Periodica (I.T.P)</a></li>
+                                                                            <li><a href="/servicii-de-inchiriere-transport-persoane/" title="Servicii de inchiriere- transport persoane">Servicii de inchiriere- transport persoane</a></li>
+                                                                            <li><a href="/inchiriere-spatii-publicitare-pe-portal/" title="Inchiriere spatii publicitare pe portal">Inchiriere spatii publicitare pe portal</a></li>
+                                                                            <li><a href="/inchiriere-spatii-publicitare-pe-autobuze/" title="Inchiriere spatii publicitare pe autobuze">Inchiriere spatii publicitare pe autobuze</a></li>
+                                                                            <li><a href="/esarfe-publicitare-pe-stalpi/" title="Esarfe publicitare pe stalpi">Esarfe publicitare pe stalpi</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/galerie-foto/" title="GALERIE FOTO">GALERIE FOTO</a>
+                                                                
+                                                             </li>
+                                              
+                </ul>
+            </div>
+            
+                        <div class="noutati">
+                <a href="/noutati/" class="vezi-noutati">Noutati</a>
+                <div class="slideshow-noutati">
+                                        <div><a href="/noutati/orar-circula%c8%9bie-in-perioada-30-aprilie-2-mai-2016_138/" title="Orar circulație în perioada 30 aprilie - 2 mai 2016"><span>28.04.2016</span> Orar circulație în perioada 30 aprilie - 2 mai 2016 - Luni, 2 mai...</a></div>
+                                        <div><a href="/noutati/ac%c8%9biune-de-voluntariat-a-angaja%c8%9bilor-rat-bra%c8%99ov_137/" title="Acțiune de voluntariat a angajaților R.A.T. Brașov"><span>18.04.2016</span> Acțiune de voluntariat a angajaților R.A.T. Brașov - Au fost...</a></div>
+                                        <div><a href="/noutati/un-nou-serviciu-gratuit-oferit-de-rat-bra%c8%99ov_136/" title="Un nou serviciu gratuit oferit de R.A.T. Brașov"><span>13.04.2016</span> Un nou serviciu gratuit oferit de R.A.T. Brașov - Bicicletele...</a></div>
+                                        <div><a href="/noutati/abonamente-gratuite-fo%c8%99ti-deporta%c8%9bi-%c8%99i-refugia%c8%9bi_135/" title="Abonamente gratuite foști deportați și refugiați"><span>12.04.2016</span> Abonamente gratuite foști deportați și refugiați - Beneficiarii...</a></div>
+                                        <div><a href="/noutati/modificare-orar-linia-41_134/" title="Modificare orar linia 41"><span>11.04.2016</span> Modificare orar linia 41 - Schimbări...</a></div>
+                                    </div>
+                <script>
+                    
+                    $(document).ready(function(){
+                    	$('.slideshow-noutati').slick({
+                    		infinite: true,
+                    		autoplay: true,
+                    		autoplaySpeed: 5000,
+                    		slidesToShow: 2,
+                    		slidesToScroll: 1
+                    	});
+                    });
+                    
+                </script>
+            </div>            
+        </div>
+        <div class="clear"></div>
+        <div class="container continut">
+                        <div class="box sidebar-stanga">
+                                <a href="http://www.ratbv.ro/trasee-si-orare/">
+                    <div class="ghid-trasee">
+                        <span class="icon">&#xf124;</span>
+                        <h2>Trasee si orare</h2>
+                        Orele de sosire in statie a autobuzelor si directiile de deplasare.
+                    </div>
+                </a>
+                                
+                                <a href="http://www.ratbv.ro/tarife-bilete-si-abonamente/">
+                    <div class="harta-trasee">
+                        <span class="icon">&#xf041;</span>
+                        <h2>Tarife</h2>
+                        Va multumim pentru alegerea facuta.
+                    </div>
+                </a>
+                                                <a href="http://www.ratbv.ro/retea-distributie-bilete-si-abonamente/">
+                    <div class="planificare-trasee">
+                        <span class="icon">&#xf058;</span>
+                        <h2>Cum cumpar tichet?</h2>
+                        Locatii pentru achizitionarea tichetelor si abonamentelor de calatorie.
+                    </div>
+                </a>
+                                
+                               
+                <div class="info-calatori">
+                                        <a href="http://card.ratbv.ro">
+                        <h2 class="titlu-albastru">Încarcă sau consultă cardul on-line!</h2>
+                    </a>
+                                        
+                                        <a href="http://www.ratbv.ro/route-planner/">
+                        <h2 class="titlu-albastru">Planificare calatorie</h2>
+                    </a>
+                     
+                                        <a href="http://www.ratbv.ro/evenimente/">
+                        <h2 class="titlu-albastru">Evenimente</h2>
+                    </a>
+                     
+                                        <a href="http://www.ratbv.ro/informatii-turisti/_18/">
+                        <h2 class="titlu-albastru">Informatii turistice</h2>
+                    </a>
+                                        
+                </div>				<div class="widget">					                     					<a href="http://www.brasovcity.ro/" target="_blank"><img src="/images/brasovcity-logo.jpg" height="65" width="200"></a></li>					<a href="http://www.metropolabrasov.ro/" target="_blank"><img src="/images/amb-logo.jpg" height="65" width="200"></a></li>					<a href="http://www.abmee.oer.ro/wordpress/" target="_blank"><img src="/images/abmee-logo.jpg" height="55" width="200"></a></li>					<a href="http://psp.ro/" target="_blank"><img src="/images/psp-logo.jpg" height="65" width="200"></a></li>					<a href="http://urtp.ro/pagini/index.php" target="_blank"><img src="/images/urtp-logo.jpg" height="55" width="200"></a></li>				</div>
+            </div>
+            <div class="box continut-pagina">
+                <h2 class="titlu-pagina">Trasee si orare</h2>
+                <p><span style="font-size: small; color: #ff0000;"><strong><span style="color: #ff0000;">&nbsp;</span></strong></span></p>
+<p><span style="font-size: small; color: #ff0000;"><strong><span style="color: #ff0000;"><a href="/sondaj-de-opinie/">SONDAJ DE OPINIE SERVICII R.A.T. BRASOV</a></span></strong></span></p>
+<p><strong style="color: #ff0000; font-size: small; line-height: 1.6em;"><span><a href="/uploads/images/harta_rat-3bae.jpg">HARTĂ TRASEE</a></span></strong></p>
+<table style="width: 1246px; height: 728px;">
+<tbody>
+<tr>
+<td><span style="font-size: small; color: #0000ff;"><strong>Autobuze</strong></span></td>
+<td><span style="font-size: small; color: #0000ff;"><strong>Autobuze Midi</strong></span></td>
+<td><span style="font-size: small; color: #0000ff;"><strong>Troleibuze</strong></span></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia1" href="/route/1/tour/" target="_blank">Linia 1</a> </span><span style="color: #2f4f4f; font-size: small;">Livada Poştei - Hărmanului - Triaj</span></strong></td>
+<td><strong><span style="font-size: small;"><strong><a class="linia14" href="/route/13/tour/" target="_blank">Linia 14</a></strong></span><span style="font-size: small;"><strong><span style="color: #2f4f4f;"> Livada Poştei - Răsăritul - Fabrica de var</span></strong></span></strong></td>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia3" href="/afisaje/3-dus.html" target="_blank">Linia 3</a></span><span style="color: #2f4f4f; font-size: small;"> Stadionul Tineretului - Valea Cetății (*Roman)<br /></span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="font-size: small;"><span style="color: #0000ff;"><a class="linia2" href="/route/2/tour/" target="_blank">Linia 2</a></span><span style="color: #2f4f4f;"> Rulmentul - Camera de Comerț<br /></span></span></strong></td>
+<td><strong><span style="font-size: small;"><span class="linia14"><strong><span style="color: #0000ff; font-size: small;"><a class="linia15" href="/route/14/tour/" target="_blank">Linia 15</a></span></strong><span style="color: #2f4f4f;"> <strong><span style="font-size: small;">Independenţei - Coresi - Triaj</span></strong></span></span></span></strong></td>
+<td><strong><span style="color: #0000ff; font-size: small;"><strong><a class="linia7" href="/afisaje/7-dus.html" target="_blank">Linia 7</a></strong></span> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Rulmentul - Roman (*Valea Cetății)<br /></span></strong></span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia4" href="/route/4/tour/" target="_blank">Linia 4</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Livada Poştei - Gara Braşov</span></strong></span></td>
+<td><strong><span class="linia15"><strong><span style="color: #0000ff; font-size: small;"><a class="linia17b" href="/route/17/tour/" target="_blank">Linia 17B</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Gara Braşov - Timişul de jos</span></strong></span></span></strong></td>
+<td><strong><span class="linia7"><strong><span style="font-size: small;"><span style="color: #0000ff;"><a class="linia8" href="/afisaje/8-dus.html" target="_blank">Linia 8</a>&nbsp;</span><span style="color: #2f4f4f;">Rulmentul - Saturn</span></span></strong></span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia5" href="/afisaje/5-dus.html" target="_blank">Linia 5</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Stad. Municipal - Roman (*Panselelor)</span></strong></span></td>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia19" href="/route/48/tour/" target="_blank">Linia 19</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Noua - CET - Triaj</span></strong></span></td>
+<td><strong><span style="font-size: small;"><span class="linia8"><strong><span style="font-size: small;"><span style="color: #0000ff;"><a class="linia10" href="/route/10/tour/" target="_blank">Linia 10</a>&nbsp;</span><span style="color: #2f4f4f;">Valea Cetăţii - Triaj</span></span></strong></span></span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia5m" href="/route/5/tour/" target="_blank">Linia 5M</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Stadionul Municipal - Măgurele</span></strong></span></td>
+<td><strong><span class="linia17b"><strong><span style="color: #0000ff; font-size: small;"><a class="linia37" href="/route/32/tour/" target="_blank">Linia 37</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Craiter - Hidro A</span></strong></span></span></strong></td>
+<td><strong><span style="font-size: small;"><span class="linia10"><strong><span style="color: #0000ff; font-size: small;"><a class="linia33" href="/afisaje/33-dus.html" target="_blank">Linia 33</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Valea Cetăţii - Roman</span></strong></span></span></span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia6" href="/afisaje/6-dus.html" target="_blank">Linia 6</a></span></strong><span style="color: #2f4f4f;"> <strong><span style="font-size: small;">Livada Poştei - Saturn</span></strong></span></td>
+<td><strong><span class="linia37"><strong><span style="color: #0000ff; font-size: small;"><a class="linia41" href="/afisaje/41-dus.html" target="_blank">Linia 41</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Livada Poştei - Stupini Lujerului (*Stupini Baciului)</span></strong></span></span></strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><strong><span style="font-size: small;"><span style="color: #0000ff;"><a class="linia9" href="/route/9/tour/" target="_blank">Linia 9</a> </span><span style="color: #2f4f4f;">Rulmentul - Independenţei - Stadionul Muncipal</span></span></strong></td>
+<td><strong><span class="linia41"><strong><span style="color: #0000ff; font-size: small;"><a class="linia50" href="/afisaje/50-dus.html" target="_blank">Linia 50</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Solomon - Castanilor - Livada Poştei</span></strong></span></span></strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia16" href="/route/15/tour/" target="_blank">Linia 16</a></span></strong><span style="font-size: small;"><span style="color: #2f4f4f; font-size: small;"><strong>Livada Poştei - Griviței - Cărămidăriei</strong></span></span></td>
+<td><strong><span style="color: #0000ff; font-size: small;"><strong><a class="linia51" href="/route/34/tour/" target="_blank">Linia 51</a></strong></span><span style="color: #2f4f4f; font-size: small;"><strong> Pe Tocile - Gara Braşov</strong></span></strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr align="left" valign="top">
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia17" href="/route/16/tour/" target="_blank">Linia 17</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Livada Poştei - Noua</span></strong></span></td>
+<td><strong><span class="linia50"><strong><span style="color: #0000ff; font-size: small;"><a class="linia52" href="/afisaje/52-dus.html" target="_blank">Linia 52</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Pe Tocile - Roman (*Panselelor)</span></strong></span></span></strong></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia18" href="/afisaje/18-dus.html" target="_blank">Linia 18</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Barieră Bartolomeu - Fundăturii (*IAR Ghimbav)</span></strong></span></td>
+<td><span class="linia52"><strong><span style="font-size: small;">&nbsp;</span></strong></span></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia20" href="/route/18/tour/" target="_blank">Linia 20</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Livada Poştei - Poiana Braşov</span></strong></span></td>
+<td>&nbsp;</td>
+<td>
+<p><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></p>
+</td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia21" href="/route/19/tour/" target="_blank">Linia 21</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Triaj - Noua</span></strong></span></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia22" href="/route/20/tour/" target="_blank">Linia 22</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Saturn - Stadionul Tineretului</span></strong></span></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia23" href="/route/37/tour/" target="_blank">Linia 23</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Saturn - Depozite ILF - Stadionul Municipal<br /></span></strong></span></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="color: #808080; font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia23b" href="/route/21/tour/" target="_blank">Linia 23B</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Triaj - A.Vlaicu - Stadionul Municipal</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia24" href="/route/22/tour/" target="_blank">Linia 24</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Livada Poştei - Campus Genius - ICPC</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia25" href="/afisaje/25-dus.html" target="_blank">Linia 25</a></span></strong> <span style="color: #2f4f4f;"><strong><span style="font-size: small;">Avantgarden - Gara Brașov</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia28" href="/afisaje/28-dus.html" target="_blank">Linia 28</a></span></strong> <strong><span style="color: #888888; font-size: small;"><span style="color: #2f4f4f;">Livada Poştei - Plugarilor - Fundăturii</span> </span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia28" href="/afisaje/28b-dus.html" target="_blank">Linia 28B</a></span></strong> <strong><span style="color: #888888; font-size: small;"><span style="color: #2f4f4f;">Livada Poştei - Bartolomeu Nord</span> </span></strong></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia29" href="/route/24/tour/" target="_blank">Linia 29</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Bartolomeu Nord - Independenţei - Gara Braşov</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia31" href="/route/26/tour/" target="_blank">Linia 31</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Valea Cetăţii - Livada Poştei</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia32" href="/route/27/tour/" target="_blank">Linia 32</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Valea Cetăţii - Gara Braşov</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia34" href="/route/39/tour/" target="_blank">Linia 34</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Livada Poştei - Cernatului (*Timiş-Triaj)</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia34b" href="/route/29/tour/" target="_blank">Linia 34B</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Timiș-Triaj - Vlahuţă - Victoriei - Hidro A<br /></span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia35" href="/route/30/tour/" target="_blank">Linia 35</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Gara Braşov - Noua</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia36" href="/route/31/tour/" target="_blank">Linia 36</a></span></strong><span style="color: #2f4f4f;"> <strong><span style="font-size: small;">Livada Poştei - Independenţei</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+<tr>
+<td><strong><span style="color: #0000ff; font-size: small;"><a class="linia40" href="/route/33/tour/" target="_blank">Linia 40</a></span></strong><span style="color: #2f4f4f;"><strong><span style="font-size: small;"> Gara Braşov - Stupini</span></strong></span></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+<td><strong><span style="font-size: small;">&nbsp;</span></strong></td>
+</tr>
+</tbody>
+</table>
+            </div>
+        </div>
+        <div class="clear"></div>
+                <div class="container carusel-stiri">
+            <div class="carusel">
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza-8-11eb.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/inchiriere-spatii-publicitare-pe-portal/"><img src="/uploads/images/1-e97d.jpg"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza3-960e.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza5-4266.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza6-834d.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza4-bc73.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/galerie-foto/_6/"><img src="/uploads/images/poza-1-6585.png"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza-10-c833.JPG"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza-2-a31a.png"></a></div>
+                                <div><a href="http://www.ratbv.ro/informatii-turisti/"><img src="/uploads/images/poza-7-e389.JPG"></a></div>
+                                
+                
+                <script>
+                    
+                    $(document).ready(function(){
+                    	$('.carusel').slick({
+                    		infinite: true,
+                    		autoplay: true,
+                    		autoplaySpeed: 2000,
+                    		slidesToShow: 4,
+                    		slidesToScroll: 1
+                    	});
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+            <div class="container footer">
+                <div class="meniu-footer cf">
+                    <ul>
+                                                                                    <li><a href="/" title="HOME">HOME</a></li>
+                                                                                                                <li>
+                                                                            <a href="/rat-brasov/" title="R.A.T. BRASOV">R.A.T. BRASOV</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/politica-noastra/" title="Politica Noastra">Politica Noastra</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/trasee-si-orare/" title="Trasee si orare">Trasee si orare</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/tarife/" title="Tarife">Tarife</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/informatii-utile/" title="Informatii utile">Informatii utile</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/servicii/" title="Servicii">Servicii</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/galerie-foto/" title="GALERIE FOTO">GALERIE FOTO</a>
+                                                                                                    
+                                 </li>
+                                                                        </ul>
+                </div>
+                <div class="copyright">
+                    Copyright © 2014 Regia Autonoma de Transport Brasov.                    
+                </div>
+            </div>
+            <center><a href="http://www.easyb.ro" title="Web design, SEO, CRM, ERP, CMS"><img src="/images/easyb.png"></a></center>
+        </div>
+    </body>
+</html>
