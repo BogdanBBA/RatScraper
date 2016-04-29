@@ -7,3 +7,4 @@ C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.csproj.G
 C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.exe
 C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.pdb
 C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.csprojResolveAssemblyReference.cache
+C:\Users\bobl395\Downloads\c\RatScraper\RatScraper\obj\Debug\RatScraper.FWork.resources
