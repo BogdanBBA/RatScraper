@@ -92,6 +92,22 @@ namespace RatScraper
             this.Asterisk = asterisk;
         }
 
+        public static StopTime Parse(string text)
+        {
+            bool asterisk = text.Contains('*');
+            string[] parts = text.Replace("*", "").Split(':');
+            return new StopTime(new TimeSpan(Int32.Parse(parts[0]), Int32.Parse(parts[1]), 0), asterisk);
+        }
+
+        public string ToSaveString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(this.Time.Hours).Append(':').Append(this.Time.Minutes);
+            if (this.Asterisk)
+                sb.Append('*');
+            return sb.ToString();
+        }
+
         public override string ToString()
         {
             return string.Format("{0:D2}:{1:D2}", this.Time.Hours, this.Time.Minutes);
@@ -121,19 +137,29 @@ namespace RatScraper
 
         public static WeekDayCategoryType ParseCategoryType(string text)
         {
-            switch (text)
+            switch (text.ToLowerInvariant())
             {
-                case "Luni - Vineri":
+                case "luni - vineri":
                     return WeekDayCategoryType.Weekday;
-                case "Sambata":
+                case "sambata":
                     return WeekDayCategoryType.Saturday;
-                case "Duminica":
+                case "duminica":
                     return WeekDayCategoryType.Sunday;
-                case "Luni - Vineri (vacanta)":
+                case "luni - vineri (vacanta)":
                     return WeekDayCategoryType.SummerWeekday;
                 default:
                     return WeekDayCategoryType.Unknown;
             }
+        }
+
+        public static WeekDayCategory Parse(XmlNode node)
+        {
+            WeekDayCategoryType type = (WeekDayCategoryType) Enum.Parse(typeof(WeekDayCategoryType), node.Attributes["type"].Value);
+            List<StopTime> stopTimes = new List<StopTime>();
+            string[] stopTimeStrings = node.Attributes["stopTimes"].Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string stopTimeString in stopTimeStrings)
+                stopTimes.Add(StopTime.Parse(stopTimeString));
+            return new WeekDayCategory(type, stopTimes);
         }
 
         public XmlNode ToXml(XmlDocument doc, string name)
@@ -143,11 +169,7 @@ namespace RatScraper
             node.AddAttribute(doc, "stopTimeCount", this.StopTimes.Count);
             StringBuilder sb = new StringBuilder();
             foreach (StopTime stopTime in this.StopTimes)
-            {
-                sb.Append(';').Append(stopTime.Time.Hours).Append(':').Append(stopTime.Time.Minutes);
-                if (stopTime.Asterisk)
-                    sb.Append('*');
-            }
+                sb.Append(';').Append(stopTime.ToSaveString());
             node.AddAttribute(doc, "stopTimes", sb.Length > 0 ? sb.ToString().Substring(1) : "");
             return node;
         }
@@ -166,6 +188,13 @@ namespace RatScraper
         public Stop(string id, string name)
             : base(id, name)
         {
+        }
+
+        public static Stop Parse(XmlNode node)
+        {
+            string id = node.Attributes["ID"].Value;
+            string name = node.Attributes["name"].Value;
+            return new Stop(id, name);
         }
     }
 
@@ -186,6 +215,16 @@ namespace RatScraper
         {
             this.Stop = stop;
             this.WeekDayCategories = weekDayCategories;
+        }
+
+        public static RouteStop Parse(XmlNode node, ListOfIDObjects<Stop> stops)
+        {
+            Stop stop = stops.GetItemByID(node.Attributes["stopID"].Value);
+            List<WeekDayCategory> weekDayCategories = new List<WeekDayCategory>();
+            XmlNodeList weekDayCategoryNodes = node.SelectNodes("WeekDayCategory");
+            foreach (XmlNode weekDayCategoryNode in weekDayCategoryNodes)
+                weekDayCategories.Add(WeekDayCategory.Parse(weekDayCategoryNode));
+            return new RouteStop(stop, weekDayCategories);
         }
 
         public XmlNode ToXml(XmlDocument doc, string name)
@@ -209,14 +248,43 @@ namespace RatScraper
     /// </summary>
     public class HalfRoute : List<RouteStop>
     {
-        public HalfRoute()
+        public string Name { get; internal set; }
+        internal Route Route { get; set; }
+
+        public HalfRoute(string name)
             : base()
         {
+            this.Name = name;
+            this.Route = null;
+        }
+
+        public int GetIndexOfRouteStopByStop(Stop stop)
+        {
+            for (int index = 0; index < this.Count; index++)
+                if (this[index].Stop.Equals(stop))
+                    return index;
+            return -1;
+        }
+
+        public RouteStop GetRouteStopByStop(Stop stop)
+        {
+            int index = this.GetIndexOfRouteStopByStop(stop);
+            return index != -1 ? this[index] : null;
+        }
+
+        public static HalfRoute Parse(XmlNode node, ListOfIDObjects<Stop> stops)
+        {
+            HalfRoute result = new HalfRoute(node.Attributes["name"].Value);
+            XmlNodeList routeStopNodes = node.SelectNodes("RouteStop");
+            foreach (XmlNode routeStopNode in routeStopNodes)
+                result.Add(RouteStop.Parse(routeStopNode, stops));
+            return result;
         }
 
         public XmlNode ToXml(XmlDocument doc, string name)
         {
             XmlNode node = doc.CreateElement(name);
+            node.AddAttribute(doc, "name", this.Name);
             node.AddAttribute(doc, "stopCount", this.Count);
             foreach (RouteStop routeStop in this)
                 node.AppendChild(routeStop.ToXml(doc, "RouteStop"));
@@ -225,7 +293,7 @@ namespace RatScraper
 
         public override string ToString()
         {
-            return string.Format("HalfRoute: {0} route stops", this.Count);
+            return string.Format("HalfRoute '{0}': {1} route stops", this.Name, this.Count);
         }
     }
 
@@ -242,6 +310,18 @@ namespace RatScraper
         {
             this.Outgoing = outgoing;
             this.Incoming = incoming;
+        }
+
+        public static Route Parse(XmlNode node, ListOfIDObjects<Stop> stops)
+        {
+            string id = node.Attributes["ID"].Value;
+            string name = node.Attributes["name"].Value;
+            HalfRoute outgoing = HalfRoute.Parse(node.SelectSingleNode("Outgoing"), stops);
+            HalfRoute incoming = HalfRoute.Parse(node.SelectSingleNode("Incoming"), stops);
+            Route result = new Route(id, name, outgoing, incoming);
+            result.Outgoing.Route = result;
+            result.Incoming.Route = result;
+            return result;
         }
 
         public new XmlNode ToXml(XmlDocument doc, string name)
@@ -274,12 +354,56 @@ namespace RatScraper
             this.Routes = new ListOfIDObjects<Route>();
         }
 
+        public bool AddUniqueStop(string name, string id = null)
+        {
+            if (id != null)
+                if (this.Stops.GetItemByID(id) != null)
+                    return false;
+                else
+                {
+                    this.Stops.Add(new Stop(id, name));
+                    return true;
+                }
+            else
+                if (this.Stops.GetItemByName(name) != null)
+                    return false;
+                else
+                {
+                    id = this.Stops.GetUniqueNumericID(3, false);
+                    this.Stops.Add(new Stop(id, name));
+                    return true;
+                }
+        }
+
+        public List<HalfRoute> GetHalfRoutesByStop(Stop stop)
+        {
+            List<HalfRoute> result = new List<HalfRoute>();
+            foreach (Route route in this.Routes)
+            {
+                if (route.Outgoing.GetRouteStopByStop(stop) != null)
+                    result.Add(route.Outgoing);
+                if (route.Incoming.GetRouteStopByStop(stop) != null)
+                    result.Add(route.Incoming);
+            }
+            return result;
+        }
+
         public string LoadDatabase(string path)
         {
             try
             {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(Paths.DatabaseFile);
+
                 this.Stops.Clear();
+                XmlNodeList nodes = doc.SelectNodes("DATABASE/STOPS/Stop");
+                foreach (XmlNode node in nodes)
+                    this.Stops.Add(Stop.Parse(node));
+
                 this.Routes.Clear();
+                nodes = doc.SelectNodes("DATABASE/ROUTES/Route");
+                foreach (XmlNode node in nodes)
+                    this.Routes.Add(Route.Parse(node, this.Stops));
 
                 return string.Empty;
             }

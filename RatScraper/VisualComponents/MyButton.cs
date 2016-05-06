@@ -8,7 +8,7 @@ namespace RatScraper.VisualComponents
     /// <summary>
     /// Custom-configured BBA button.
     /// </summary>
-    public class MyButton : MyEuroBaseControl
+    public class MyButton : MyAppBaseControl
     {
         public static readonly Pair<int> BarHeight = new Pair<int>(2, 4);
 

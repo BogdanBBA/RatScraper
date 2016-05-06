@@ -9,12 +9,12 @@ namespace RatScraper.VisualComponents
     /// <summary>
     /// Base control from which to derive app-specific visual controls.
     /// </summary>
-    public abstract class MyEuroBaseControl : Control
+    public abstract class MyAppBaseControl : Control
     {
         protected bool mouseIsOver = false;
         protected bool mouseIsClicked = false;
 
-        public MyEuroBaseControl()
+        public MyAppBaseControl()
             : base()
         {
             this.BackColor = MyGUIs.Background.Normal.Color;
@@ -81,7 +81,7 @@ namespace RatScraper.VisualComponents
         }
 
         public static List<TYPE> CreateControlCollection<TYPE>(ICollection<string> captions, EventHandler clickEventHandler, string namePrefix, ICollection<Tuple<string, object>> customProperties)
-            where TYPE : MyEuroBaseControl
+            where TYPE : MyAppBaseControl
         {
             List<TYPE> result = new List<TYPE>();
             int lastNumber = 0;

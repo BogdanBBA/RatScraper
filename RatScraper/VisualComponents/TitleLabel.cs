@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RatScraper.VisualComponents
 {
-    public class TitleLabel : MyEuroBaseControl
+    public class TitleLabel : MyAppBaseControl
     {
         public static readonly Pair<int> BarHeight = new Pair<int>(2, 4);
         public const int TitleLabelHeight = 90;

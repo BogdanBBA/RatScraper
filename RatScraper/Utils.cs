@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RatScraper.VisualComponents;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -107,10 +108,10 @@ namespace RatScraper
         }
 
         /// <summary>Returns a unique numeric (a string left-padded with zeroes) ID for this list.</summary>
-        public string GetUniqueNumericID(int length)
+        public string GetUniqueNumericID(int length, bool ascending)
         {
             string format = "D" + length;
-            for (int iID = 0; true; iID++)
+            for (int iID = ascending ? 0 : (int) Math.Pow(10, length) - 1; true; iID += (ascending ? 1 : -1))
                 if (this.GetIndexOfItemByID(iID.ToString(format)) == -1)
                     return iID.ToString(format);
         }
@@ -309,6 +310,15 @@ namespace RatScraper
                 else
                     controls[index].SetBounds(0, lastPos, container.Width, newControlSize);
             }
+        }
+
+        public static void CheckControlAndUncheckAllOthers<TYPE>(this List<TYPE> list, TYPE controlToCheck) where TYPE : MyAppBaseControl
+        {
+            foreach (TYPE item in list)
+                if (item.Checked != false)
+                    item.Checked = false;
+            if (controlToCheck != null)
+                controlToCheck.Checked = true;
         }
 
         public static void RemoveAllClickEvents(this Control control)

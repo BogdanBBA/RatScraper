@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace RatScraper.VisualComponents
 {
-    public class InfoViewDetail : MyEuroBaseControl
+    public class InfoViewDetail : MyAppBaseControl
     {
         public static readonly Pair<int> BarHeight = new Pair<int>(2, 4);
         public const int InfoViewHeight = 35;

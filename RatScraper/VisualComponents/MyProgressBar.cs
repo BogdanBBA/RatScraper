@@ -13,7 +13,7 @@ namespace RatScraper.VisualComponents
     /// <summary>
     /// Custom-configured BBA progress bar.
     /// </summary>
-    public class MyProgressBar : MyEuroBaseControl
+    public class MyProgressBar : MyAppBaseControl
     {
         /// <summary>The vertical padding of the actual progress bar of a MyProgressBar.</summary>
         protected const int VerticalBarPadding = 6;
