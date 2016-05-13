@@ -11,21 +11,50 @@ namespace RatScraper.VisualComponents
     /// </summary>
     public abstract class MyAppBaseControl : Control
     {
+        protected const int AnimationDuration = 400;
+        protected const int AnimationRefreshInterval = 20;
+        protected const int AnimationFrameCount = (int) ((double) MyAppBaseControl.AnimationDuration / MyAppBaseControl.AnimationRefreshInterval);
+        public enum EasingFunctions { Linear, MyOwn };
+
         protected bool mouseIsOver = false;
         protected bool mouseIsClicked = false;
+        protected bool isChecked = false;
+
+        protected bool supportsAnimation = true;
+        protected EasingFunctions easingFunction = EasingFunctions.Linear;
+        protected int animationFramesDrawn = 0;
+        protected int animationStartPosition = 0;
+        protected int animationCurrentPosition = 0;
+        protected int animationEndPosition = 0;
+        protected Timer animationTimer = new Timer();
 
         public MyAppBaseControl()
             : base()
         {
             this.BackColor = MyGUIs.Background.Normal.Color;
-            this.DoubleBuffered = true;
+            this.animationTimer.Interval = MyAppBaseControl.AnimationRefreshInterval;
+            this.animationTimer.Tick += animationTimer_Tick;
         }
 
-        protected bool isChecked;
         public bool Checked
         {
             get { return this.isChecked; }
             set { if (this.isChecked != value) { this.isChecked = value; this.Invalidate(); } }
+        }
+
+        public bool SupportsAnimation
+        {
+            get { return this.supportsAnimation; }
+            set
+            {
+                if (this.supportsAnimation != value)
+                {
+                    if (!value)
+                        this.animationTimer.Enabled = false;
+                    this.supportsAnimation = value;
+                    this.Invalidate();
+                }
+            }
         }
 
         protected override void OnMouseEnter(EventArgs e)
@@ -97,6 +126,47 @@ namespace RatScraper.VisualComponents
                 result.Add(item);
             }
             return result;
+        }
+
+        protected void StartAnimation(int animationStartPosition, int animationEndPosition)
+        {
+            if (!this.supportsAnimation)
+                return;
+            this.animationTimer.Enabled = false;
+            this.animationFramesDrawn = 0;
+            this.animationStartPosition = animationStartPosition;
+            this.animationCurrentPosition = animationStartPosition;
+            this.animationEndPosition = animationEndPosition;
+            animationTimer_Tick(null, null);
+            this.animationTimer.Enabled = true;
+        }
+
+        protected void StopAnimation()
+        {
+            this.animationCurrentPosition = this.animationEndPosition;
+            this.animationTimer.Enabled = false;
+        }
+
+        protected void animationTimer_Tick(object sender, EventArgs e)
+        {
+            this.animationCurrentPosition = MyAppBaseControl.MyEasingFunction(this.easingFunction, this.animationStartPosition, this.animationEndPosition, this.animationFramesDrawn, MyAppBaseControl.AnimationFrameCount);
+            if (++this.animationFramesDrawn > MyAppBaseControl.AnimationFrameCount)
+                this.StopAnimation();
+            this.Invalidate();
+        }
+
+        public static int MyEasingFunction(EasingFunctions function, int startPosition, int endPosition, int currentFrame, int totalFrames)
+        {
+            switch (function)
+            {
+                case EasingFunctions.Linear:
+                    //Console.WriteLine("startPosition={0}, endPosition={1}, currentFrame={2}, totalFrames={3}; result={4}", startPosition, endPosition, currentFrame, totalFrames, (int) (startPosition + ((double) currentFrame / totalFrames) * (endPosition - startPosition)));
+                    return (int) (startPosition + ((double) currentFrame / totalFrames) * (endPosition - startPosition));
+                case EasingFunctions.MyOwn:
+                    return (int) (startPosition < endPosition ? endPosition : (endPosition - startPosition) * (1 - Math.Pow(endPosition - startPosition, 2)));
+                default:
+                    return -1;
+            }
         }
     }
 

@@ -31,6 +31,7 @@ namespace RatScraper.VisualComponents
             this.mouseIsOver = false;
             this.mouseIsClicked = false;
             this.mouseDragScroll_EventHandler = mouseDragScroll_EventHandler;
+            this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
             this.UpdateScrollBarScroll(0, 0, 0, false);
         }
 

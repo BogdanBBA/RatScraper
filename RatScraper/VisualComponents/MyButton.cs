@@ -16,7 +16,10 @@ namespace RatScraper.VisualComponents
             : base()
         {
             this.Cursor = Cursors.Hand;
-            this.Font =  new Font("Segoe UI", 10);
+            this.Font = new Font("Segoe UI", 10);
+
+            this.easingFunction = EasingFunctions.Linear;
+            this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
         }
 
         private bool drawBar = true;
@@ -40,6 +43,20 @@ namespace RatScraper.VisualComponents
             set { this.image = value; this.Invalidate(); }
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            if (this.supportsAnimation)
+                this.StartAnimation(this.animationCurrentPosition, this.Width);
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            if (this.supportsAnimation)
+                this.StartAnimation(this.animationCurrentPosition, 0);
+            base.OnMouseLeave(e);
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -61,7 +78,12 @@ namespace RatScraper.VisualComponents
                 new Point(lastLeft, this.Height / 2 - size.Height / 2));
 
             if (this.drawBar)
-                e.Graphics.FillRectangle(MyGUIs.Accent.GetValue(this.mouseIsOver).Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.Width - 2, BarHeight.GetValue(this.bigBar));
+            {
+                e.Graphics.FillRectangle(MyGUIs.Accent.Normal.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.Width - 2, BarHeight.GetValue(this.bigBar));
+                if (this.supportsAnimation)
+                    e.Graphics.FillRectangle(MyGUIs.Accent.Highlighted.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.animationCurrentPosition, BarHeight.GetValue(this.bigBar));
+                //Console.WriteLine(this.animationCurrentPosition);
+            }
         }
     }
 }
