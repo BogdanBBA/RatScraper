@@ -14,7 +14,7 @@ namespace RatScraper.VisualComponents
         protected const int AnimationDuration = 400;
         protected const int AnimationRefreshInterval = 20;
         protected const int AnimationFrameCount = (int) ((double) MyAppBaseControl.AnimationDuration / MyAppBaseControl.AnimationRefreshInterval);
-        public enum EasingFunctions { Linear, MyOwn };
+        public enum EasingFunctions { Linear, QuadraticOut, ExponentialOut, CircularOut };
 
         protected bool mouseIsOver = false;
         protected bool mouseIsClicked = false;
@@ -149,21 +149,28 @@ namespace RatScraper.VisualComponents
 
         protected void animationTimer_Tick(object sender, EventArgs e)
         {
-            this.animationCurrentPosition = MyAppBaseControl.MyEasingFunction(this.easingFunction, this.animationStartPosition, this.animationEndPosition, this.animationFramesDrawn, MyAppBaseControl.AnimationFrameCount);
+            this.animationCurrentPosition = MyAppBaseControl.EaseTransition(this.easingFunction, this.animationStartPosition, this.animationEndPosition, this.animationFramesDrawn, MyAppBaseControl.AnimationFrameCount);
             if (++this.animationFramesDrawn > MyAppBaseControl.AnimationFrameCount)
                 this.StopAnimation();
             this.Invalidate();
         }
 
-        public static int MyEasingFunction(EasingFunctions function, int startPosition, int endPosition, int currentFrame, int totalFrames)
+        public static int EaseTransition(EasingFunctions function, double startPosition, double endPosition, double currentFrame, double totalFrames)
         {
+            //Console.WriteLine("startPosition={0}, endPosition={1}, currentFrame={2}, totalFrames={3}; result={4}", startPosition, endPosition, currentFrame, totalFrames, (int) (-(endPosition - startPosition) * currentFrame * (currentFrame - 2) + startPosition));
+            double changeInPosition = endPosition - startPosition;
             switch (function)
             {
                 case EasingFunctions.Linear:
-                    //Console.WriteLine("startPosition={0}, endPosition={1}, currentFrame={2}, totalFrames={3}; result={4}", startPosition, endPosition, currentFrame, totalFrames, (int) (startPosition + ((double) currentFrame / totalFrames) * (endPosition - startPosition)));
-                    return (int) (startPosition + ((double) currentFrame / totalFrames) * (endPosition - startPosition));
-                case EasingFunctions.MyOwn:
-                    return (int) (startPosition < endPosition ? endPosition : (endPosition - startPosition) * (1 - Math.Pow(endPosition - startPosition, 2)));
+                    return (int) (startPosition + (currentFrame / totalFrames) * (endPosition - startPosition));
+                case EasingFunctions.QuadraticOut:
+                    currentFrame /= totalFrames;
+                    return (int) (-changeInPosition * currentFrame * (currentFrame - 2) + startPosition);
+                case EasingFunctions.ExponentialOut:
+                    return (int) (changeInPosition * (-Math.Pow(2, -10 * currentFrame / totalFrames) + 1) + startPosition);
+                case EasingFunctions.CircularOut:
+                    currentFrame = (currentFrame / totalFrames) - 1;
+                    return (int) (changeInPosition * Math.Sqrt(1 - currentFrame * currentFrame) + startPosition);
                 default:
                     return -1;
             }

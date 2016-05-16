@@ -18,7 +18,7 @@ namespace RatScraper.VisualComponents
             this.Cursor = Cursors.Hand;
             this.Font = new Font("Segoe UI", 10);
 
-            this.easingFunction = EasingFunctions.Linear;
+            this.easingFunction = EasingFunctions.CircularOut;
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
         }
 
@@ -82,7 +82,6 @@ namespace RatScraper.VisualComponents
                 e.Graphics.FillRectangle(MyGUIs.Accent.Normal.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.Width - 2, BarHeight.GetValue(this.bigBar));
                 if (this.supportsAnimation)
                     e.Graphics.FillRectangle(MyGUIs.Accent.Highlighted.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.animationCurrentPosition, BarHeight.GetValue(this.bigBar));
-                //Console.WriteLine(this.animationCurrentPosition);
             }
         }
     }
