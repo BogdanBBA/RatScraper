@@ -289,7 +289,7 @@ namespace RatScraper
                             case "web_class_minutes":
                                 if (rowNode.InnerText.Contains("NU CIRCUL"))
                                     break;
-                                string[] minutesParts = rowNode.InnerText.Trim().Replace(' ', ';').Replace("\n", ";").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                                string[] minutesParts = rowNode.InnerText.Trim().Replace(' ', ';').Replace("\n", ";").Replace("\t", ";").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                                 foreach (string minutePart in minutesParts)
                                 {
                                     StopTime stopTime = new StopTime(new TimeSpan(lastHour, Int32.Parse(minutePart.Replace("*", "")), 0), minutePart.Contains('*'));

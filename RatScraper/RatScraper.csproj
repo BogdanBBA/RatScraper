@@ -94,6 +94,9 @@
     <Compile Include="VisualComponents\SmoothLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="VisualComponents\StopTimeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="VisualComponents\StopViews.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -41,7 +41,8 @@
             this.stopFilterT = new System.Windows.Forms.Timer(this.components);
             this.routeP = new RatScraper.VisualComponents.MyPanel();
             this.infoView1 = new RatScraper.VisualComponents.InfoView();
-            this.stopTimeLB = new System.Windows.Forms.ListBox();
+            this.stopTimeP = new RatScraper.VisualComponents.MyPanel();
+            this.routeP.SuspendLayout();
             this.SuspendLayout();
             // 
             // titleTL
@@ -187,6 +188,7 @@
             // 
             // routeP
             // 
+            this.routeP.Controls.Add(this.stopTimeP);
             this.routeP.DrawPanelAccent = false;
             this.routeP.Location = new System.Drawing.Point(258, 166);
             this.routeP.Name = "routeP";
@@ -209,19 +211,17 @@
             this.infoView1.TextDescription = " (glumesc, doar e vorba de RAT Brașov)";
             this.infoView1.TextText = "Fii în stație la:";
             // 
-            // listBox1
+            // stopTimeP
             // 
-            this.stopTimeLB.FormattingEnabled = true;
-            this.stopTimeLB.ItemHeight = 21;
-            this.stopTimeLB.Location = new System.Drawing.Point(624, 166);
-            this.stopTimeLB.Name = "listBox1";
-            this.stopTimeLB.Size = new System.Drawing.Size(310, 361);
-            this.stopTimeLB.TabIndex = 13;
+            this.stopTimeP.DrawPanelAccent = false;
+            this.stopTimeP.Location = new System.Drawing.Point(366, 0);
+            this.stopTimeP.Name = "stopTimeP";
+            this.stopTimeP.Size = new System.Drawing.Size(310, 358);
+            this.stopTimeP.TabIndex = 13;
             // 
             // FMain
             // 
             this.ClientSize = new System.Drawing.Size(946, 618);
-            this.Controls.Add(this.stopTimeLB);
             this.Controls.Add(this.infoView1);
             this.Controls.Add(this.routeP);
             this.Controls.Add(this.stopP);
@@ -235,6 +235,7 @@
             this.Controls.Add(this.titleTL);
             this.Name = "FMain";
             this.Load += new System.EventHandler(this.FMain_Load);
+            this.routeP.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -254,7 +255,7 @@
         private System.Windows.Forms.Timer stopFilterT;
         private VisualComponents.MyPanel routeP;
         private VisualComponents.InfoView infoView1;
-        private System.Windows.Forms.ListBox stopTimeLB;
+        private VisualComponents.MyPanel stopTimeP;
 
     }
 }
