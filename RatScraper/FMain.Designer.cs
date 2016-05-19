@@ -40,6 +40,8 @@
             this.stopP = new RatScraper.VisualComponents.MyPanel();
             this.stopFilterT = new System.Windows.Forms.Timer(this.components);
             this.routeP = new RatScraper.VisualComponents.MyPanel();
+            this.infoView1 = new RatScraper.VisualComponents.InfoView();
+            this.stopTimeLB = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // titleTL
@@ -52,6 +54,7 @@
             this.titleTL.Location = new System.Drawing.Point(12, 12);
             this.titleTL.Name = "titleTL";
             this.titleTL.Size = new System.Drawing.Size(922, 90);
+            this.titleTL.SupportsAnimation = true;
             this.titleTL.TabIndex = 0;
             this.titleTL.Text = "titleLabel1";
             this.titleTL.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
@@ -67,6 +70,7 @@
             this.stopFilterIV.Location = new System.Drawing.Point(12, 108);
             this.stopFilterIV.Name = "stopFilterIV";
             this.stopFilterIV.Size = new System.Drawing.Size(240, 52);
+            this.stopFilterIV.SupportsAnimation = true;
             this.stopFilterIV.TabIndex = 1;
             this.stopFilterIV.Text = "infoView1";
             this.stopFilterIV.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
@@ -82,6 +86,7 @@
             this.routeIV.Location = new System.Drawing.Point(258, 108);
             this.routeIV.Name = "routeIV";
             this.routeIV.Size = new System.Drawing.Size(360, 52);
+            this.routeIV.SupportsAnimation = true;
             this.routeIV.TabIndex = 2;
             this.routeIV.Text = "infoView2";
             this.routeIV.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
@@ -112,6 +117,7 @@
             this.clearSearchB.Location = new System.Drawing.Point(222, 166);
             this.clearSearchB.Name = "clearSearchB";
             this.clearSearchB.Size = new System.Drawing.Size(30, 23);
+            this.clearSearchB.SupportsAnimation = true;
             this.clearSearchB.TabIndex = 4;
             this.clearSearchB.Text = "×";
             this.clearSearchB.Click += new System.EventHandler(this.clearSearchB_Click);
@@ -128,6 +134,7 @@
             this.moreB.Location = new System.Drawing.Point(367, 544);
             this.moreB.Name = "moreB";
             this.moreB.Size = new System.Drawing.Size(200, 50);
+            this.moreB.SupportsAnimation = true;
             this.moreB.TabIndex = 7;
             this.moreB.Text = "[ MORE ]";
             // 
@@ -143,6 +150,7 @@
             this.exitB.Location = new System.Drawing.Point(573, 544);
             this.exitB.Name = "exitB";
             this.exitB.Size = new System.Drawing.Size(200, 50);
+            this.exitB.SupportsAnimation = true;
             this.exitB.TabIndex = 8;
             this.exitB.Text = "EXIT";
             this.exitB.Click += new System.EventHandler(this.exitB_Click);
@@ -159,6 +167,7 @@
             this.updateB.Location = new System.Drawing.Point(161, 544);
             this.updateB.Name = "updateB";
             this.updateB.Size = new System.Drawing.Size(200, 50);
+            this.updateB.SupportsAnimation = true;
             this.updateB.TabIndex = 9;
             this.updateB.Text = "UPDATE";
             this.updateB.Click += new System.EventHandler(this.updateB_Click);
@@ -184,9 +193,36 @@
             this.routeP.Size = new System.Drawing.Size(360, 358);
             this.routeP.TabIndex = 11;
             // 
+            // infoView1
+            // 
+            this.infoView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(53)))), ((int)(((byte)(56)))));
+            this.infoView1.BigBar = false;
+            this.infoView1.Checked = false;
+            this.infoView1.DrawBar = true;
+            this.infoView1.Location = new System.Drawing.Point(624, 108);
+            this.infoView1.Name = "infoView1";
+            this.infoView1.Size = new System.Drawing.Size(310, 52);
+            this.infoView1.SupportsAnimation = true;
+            this.infoView1.TabIndex = 12;
+            this.infoView1.Text = "infoView2";
+            this.infoView1.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.infoView1.TextDescription = " (glumesc, doar e vorba de RAT Brașov)";
+            this.infoView1.TextText = "Fii în stație la:";
+            // 
+            // listBox1
+            // 
+            this.stopTimeLB.FormattingEnabled = true;
+            this.stopTimeLB.ItemHeight = 21;
+            this.stopTimeLB.Location = new System.Drawing.Point(624, 166);
+            this.stopTimeLB.Name = "listBox1";
+            this.stopTimeLB.Size = new System.Drawing.Size(310, 361);
+            this.stopTimeLB.TabIndex = 13;
+            // 
             // FMain
             // 
             this.ClientSize = new System.Drawing.Size(946, 618);
+            this.Controls.Add(this.stopTimeLB);
+            this.Controls.Add(this.infoView1);
             this.Controls.Add(this.routeP);
             this.Controls.Add(this.stopP);
             this.Controls.Add(this.updateB);
@@ -217,6 +253,8 @@
         private VisualComponents.MyPanel stopP;
         private System.Windows.Forms.Timer stopFilterT;
         private VisualComponents.MyPanel routeP;
+        private VisualComponents.InfoView infoView1;
+        private System.Windows.Forms.ListBox stopTimeLB;
 
     }
 }

@@ -18,8 +18,9 @@ namespace RatScraper
     public partial class FMain : MyForm
     {
         public Database Database { get; private set; }
-        private StopViewManager stopViewManager { get; set; }
-        private HalfRouteViewManager routeViewManager { get; set; }
+        internal StopViewManager stopViewManager { get; set; }
+        internal HalfRouteViewManager routeViewManager { get; set; }
+        internal StopView selectedStopView { get; set; }
 
         public FMain(FMain mainForm)
             : base(null)
@@ -66,7 +67,7 @@ namespace RatScraper
             stopFilterTB.Text = string.Empty;
         }
 
-        private void stopFilterT_Tick(object sender, EventArgs e)
+        internal void stopFilterT_Tick(object sender, EventArgs e)
         {
             stopFilterT.Enabled = false;
             ListOfIDObjects<Stop> stops = new ListOfIDObjects<Stop>();
@@ -78,17 +79,35 @@ namespace RatScraper
             stopFilterIV.TextDescription = string.Format("Ai filtrat {0} / {1} stații", stops.Count, this.Database.Stops.Count);
         }
 
-        private void StopView_Click(object sender, EventArgs e)
+        internal void StopView_Click(object sender, EventArgs e)
         {
-            StopView stopView = sender as StopView;
-            this.stopViewManager.StopViews.CheckControlAndUncheckAllOthers(stopView);
-            routeIV.TextDescription = string.Format("Ești la {0}.", stopView.Stop.Name);
-            this.routeViewManager.SetHalfRoutes(this.Database.GetHalfRoutesByStop(stopView.Stop));
+            if (sender == null)
+            {
+                this.stopViewManager.StopViews.CheckControlAndUncheckAllOthers(null);
+                routeIV.TextDescription = " ";
+                this.routeViewManager.SetHalfRoutes(new List<HalfRoute>());
+                this.stopTimeLB.Items.Clear();
+                return;
+            }
+            this.selectedStopView = sender as StopView;
+            this.stopViewManager.StopViews.CheckControlAndUncheckAllOthers(this.selectedStopView);
+            routeIV.TextDescription = string.Format("Ești la {0}.", this.selectedStopView.Stop.Name);
+            this.routeViewManager.SetHalfRoutes(this.Database.GetHalfRoutesByStopName(this.selectedStopView.Stop.Name));
         }
 
-        private void RouteView_Click(object sender, EventArgs e)
+        internal void RouteView_Click(object sender, EventArgs e)
         {
+            HalfRouteView hrView = sender as HalfRouteView;
+            hrView.Checked = !hrView.Checked;
 
+            List<HalfRoute> halfRoutes = new List<HalfRoute>();
+            foreach (HalfRouteView iHRView in this.routeViewManager.HalfRouteViews)
+                if (iHRView.Checked)
+                    halfRoutes.Add(iHRView.HalfRoute);
+            stopTimeLB.Items.Clear();
+            List<KeyValuePair<HalfRoute, StopTime>> stopTimes = Database.GetStopTimes(halfRoutes, this.selectedStopView.Stop, DateTime.Now, new TimeSpan(4, 0, 0));
+            foreach (KeyValuePair<HalfRoute, StopTime> stopTime in stopTimes)
+                stopTimeLB.Items.Add(stopTime.Key.Route.ID + " - " + stopTime.Value);
         }
 
         private void updateB_Click(object sender, EventArgs e)

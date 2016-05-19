@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace RatScraper.VisualComponents
 {
-    public class MyScrollBar : Control
+    public class MyScrollBar : MyAppBaseControl
     {
         public enum ScrollBarPosition { Bottom, Right };
 
@@ -12,8 +12,6 @@ namespace RatScraper.VisualComponents
         private int visibleSize;
         private int totalSize;
 
-        private bool mouseIsOver;
-        private bool mouseIsClicked;
         private Point lastPosition;
         private Action<double> mouseDragScroll_EventHandler;
 
@@ -28,9 +26,9 @@ namespace RatScraper.VisualComponents
             : base()
         {
             this.position = position;
-            this.mouseIsOver = false;
-            this.mouseIsClicked = false;
             this.mouseDragScroll_EventHandler = mouseDragScroll_EventHandler;
+            this.Cursor = Cursors.SizeNS;
+            this.SetAnimationParameters(true, EasingFunctions.QuadraticOut, 250, 25);
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
             this.UpdateScrollBarScroll(0, 0, 0, false);
         }
@@ -60,8 +58,9 @@ namespace RatScraper.VisualComponents
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            this.mouseIsOver = true;
-            this.Invalidate();
+            if (this.supportsAnimation)
+                this.StartAnimation(this.animationCurrentPosition, this.position == ScrollBarPosition.Right ? this.Height : this.Width);
+            base.OnMouseEnter(e);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -73,26 +72,22 @@ namespace RatScraper.VisualComponents
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            this.mouseIsOver = false;
-            this.Invalidate();
-        }
-
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            this.mouseIsClicked = true;
-            this.DoTheMouseDragScrollThing();
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            this.mouseIsClicked = false;
-            this.Invalidate();
+            if (this.supportsAnimation)
+                this.StartAnimation(this.animationCurrentPosition, 0);
+            base.OnMouseLeave(e);
         }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.Clear(MyGUIs.Background.GetValue(this.mouseIsOver).Color);
+            pe.Graphics.Clear(MyGUIs.Background.Highlighted.Color);
             int barTotalLength = this.position == ScrollBarPosition.Right ? this.Height : this.Width;
+            if (this.supportsAnimation)
+            {
+                int barNonHighlightedLength = (int) (barTotalLength - this.animationCurrentPosition);
+                //Console.WriteLine("barTotalLength={0}, animationCurrentPosition={1}, barNonHighlightedLength={2}", barTotalLength, animationCurrentPosition, barNonHighlightedLength);
+                pe.Graphics.FillRectangle(MyGUIs.Background.Normal.Brush,
+                    this.position == ScrollBarPosition.Right ? new Rectangle(0, 0, this.Width, barNonHighlightedLength) : new Rectangle(0, 0, barNonHighlightedLength, this.Height));
+            }
             float start = (float) this.startPosition / (this.totalSize > 0 ? this.totalSize : 1) * barTotalLength;
             float length = (float) this.visibleSize / (this.totalSize > 0 ? this.totalSize : 1) * barTotalLength;
             RectangleF barRect = this.position == ScrollBarPosition.Right ? new RectangleF(0, start, this.Width, length) : new RectangleF(start, 0, length, this.Height);

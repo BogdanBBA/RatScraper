@@ -110,7 +110,7 @@ namespace RatScraper
 
         public override string ToString()
         {
-            return string.Format("{0:D2}:{1:D2}", this.Time.Hours, this.Time.Minutes);
+            return string.Format("{0:D2}:{1:D2}{2}", this.Time.Hours, this.Time.Minutes, this.Asterisk ? "*" : "");
         }
     }
 
@@ -119,7 +119,7 @@ namespace RatScraper
     /// </summary>
     public class WeekDayCategory
     {
-        public enum WeekDayCategoryType { Unknown, Weekday, Saturday, Sunday, SaturdaySunday, SummerWeekday };
+        public enum WeekDayCategoryType { Unknown, Weekday, SaturdaySunday, Saturday, Sunday, SummerWeekday };
 
         public WeekDayCategoryType Type { get; private set; }
         public List<StopTime> StopTimes { get; private set; }
@@ -135,15 +135,39 @@ namespace RatScraper
             this.StopTimes = stopTimes;
         }
 
+        public bool ContainsDate(DateTime date)
+        {
+            switch (this.Type)
+            {
+                case WeekDayCategoryType.Weekday:
+                    return (int) date.DayOfWeek >= (int) DayOfWeek.Monday && (int) date.DayOfWeek <= (int) DayOfWeek.Friday;
+                case WeekDayCategoryType.SaturdaySunday:
+                    return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+                case WeekDayCategoryType.Saturday:
+                    return date.DayOfWeek == DayOfWeek.Saturday;
+                case WeekDayCategoryType.Sunday:
+                    return date.DayOfWeek == DayOfWeek.Sunday;
+                case WeekDayCategoryType.SummerWeekday:
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
         public static WeekDayCategoryType ParseCategoryType(string text)
         {
             switch (text.ToLowerInvariant())
             {
+                case "luni-vineri":
                 case "luni - vineri":
                     return WeekDayCategoryType.Weekday;
+                case "sâmbăta - duminică":
+                    return WeekDayCategoryType.SaturdaySunday;
                 case "sambata":
+                case "sâmbăta":
                     return WeekDayCategoryType.Saturday;
                 case "duminica":
+                case "duminică":
                     return WeekDayCategoryType.Sunday;
                 case "luni - vineri (vacanta)":
                     return WeekDayCategoryType.SummerWeekday;
@@ -266,9 +290,23 @@ namespace RatScraper
             return -1;
         }
 
+        public int GetIndexOfRouteStopByStopName(string stopName)
+        {
+            for (int index = 0; index < this.Count; index++)
+                if (this[index].Stop.Name.Equals(stopName))
+                    return index;
+            return -1;
+        }
+
         public RouteStop GetRouteStopByStop(Stop stop)
         {
             int index = this.GetIndexOfRouteStopByStop(stop);
+            return index != -1 ? this[index] : null;
+        }
+
+        public RouteStop GetRouteStopByStopName(string stopName)
+        {
+            int index = this.GetIndexOfRouteStopByStopName(stopName);
             return index != -1 ? this[index] : null;
         }
 
@@ -302,12 +340,14 @@ namespace RatScraper
     /// </summary>
     public class Route : ObjectWithName
     {
+        public Color Color { get; internal set; }
         public HalfRoute Outgoing { get; private set; }
         public HalfRoute Incoming { get; private set; }
 
-        public Route(string id, string name, HalfRoute outgoing, HalfRoute incoming)
+        public Route(string id, string name, Color color, HalfRoute outgoing, HalfRoute incoming)
             : base(id, name)
         {
+            this.Color = color;
             this.Outgoing = outgoing;
             this.Incoming = incoming;
         }
@@ -316,9 +356,10 @@ namespace RatScraper
         {
             string id = node.Attributes["ID"].Value;
             string name = node.Attributes["name"].Value;
+            Color color = ColorTranslator.FromHtml(node.Attributes["color"].Value);
             HalfRoute outgoing = HalfRoute.Parse(node.SelectSingleNode("Outgoing"), stops);
             HalfRoute incoming = HalfRoute.Parse(node.SelectSingleNode("Incoming"), stops);
-            Route result = new Route(id, name, outgoing, incoming);
+            Route result = new Route(id, name, color, outgoing, incoming);
             result.Outgoing.Route = result;
             result.Incoming.Route = result;
             return result;
@@ -327,6 +368,7 @@ namespace RatScraper
         public new XmlNode ToXml(XmlDocument doc, string name)
         {
             XmlNode node = base.ToXml(doc, name);
+            node.AddAttribute(doc, "color", ColorTranslator.ToHtml(this.Color));
             if (this.Outgoing != null)
                 node.AppendChild(this.Outgoing.ToXml(doc, "Outgoing"));
             if (this.Incoming != null)
@@ -385,6 +427,40 @@ namespace RatScraper
                 if (route.Incoming.GetRouteStopByStop(stop) != null)
                     result.Add(route.Incoming);
             }
+            return result;
+        }
+
+        public List<HalfRoute> GetHalfRoutesByStopName(string stopName)
+        {
+            List<HalfRoute> result = new List<HalfRoute>();
+            foreach (Route route in this.Routes)
+            {
+                if (route.Outgoing.GetRouteStopByStopName(stopName) != null)
+                    result.Add(route.Outgoing);
+                if (route.Incoming.GetRouteStopByStopName(stopName) != null)
+                    result.Add(route.Incoming);
+            }
+            return result;
+        }
+
+        public List<KeyValuePair<HalfRoute, StopTime>> GetStopTimes(List<HalfRoute> halfRoutes, Stop stop, DateTime moment, TimeSpan duration)
+        {
+            List<KeyValuePair<HalfRoute, StopTime>> result = new List<KeyValuePair<HalfRoute, StopTime>>();
+
+            foreach (HalfRoute halfRoute in halfRoutes)
+                foreach (RouteStop routeStop in halfRoute)
+                    if (routeStop.Stop.Equals(stop))
+                        foreach (WeekDayCategory weekdayCategory in routeStop.WeekDayCategories)
+                            if (weekdayCategory.ContainsDate(moment))
+                                foreach (StopTime stopTime in weekdayCategory.StopTimes)
+                                    if (moment.TimeOfDay.Ticks <= stopTime.Time.Ticks && stopTime.Time.Ticks <= moment.TimeOfDay.Ticks + duration.Ticks)
+                                        result.Add(new KeyValuePair<HalfRoute, StopTime>(halfRoute, stopTime));
+
+            for (int iR = 0; iR < result.Count - 1; iR++)
+                for (int jR = iR + 1; jR < result.Count; jR++)
+                    if (result[iR].Value.Time.CompareTo(result[jR].Value.Time) > 0)
+                        result.SwapItemsAtPositions(iR, jR);
+
             return result;
         }
 

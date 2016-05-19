@@ -56,17 +56,17 @@ namespace RatScraper
             Database database = e.Argument as Database;
             database.Stops.Clear();
             database.Routes.Clear();
-            List<KeyValuePair<string, string>> routePages = new List<KeyValuePair<string, string>>();
+            List<Tuple<string, string, Color>> routePages = new List<Tuple<string, string, Color>>();
 
             workBW.ReportProgress(0, @"Downloading http://www.ratbv.ro/trasee-si-orare/...");
-            WebClient web = new WebClient();
-            web.DownloadFile(@"http://www.ratbv.ro/trasee-si-orare/", Paths.DownloadsFolder + "trasee si orare.html");
+            WebClient client = new WebClient();
+            client.DownloadFile(@"http://www.ratbv.ro/trasee-si-orare/", Paths.DownloadsFolder + "trasee si orare.html");
 
             workBW.ReportProgress(0, @"Processing http://www.ratbv.ro/trasee-si-orare/...");
             Match routeSectionMatch = Regex.Match(File.ReadAllText(Paths.DownloadsFolder + "trasee si orare.html"), @"<div class=""box continut-pagina"">.*</div>", RegexOptions.Singleline);
             string routeSection = routeSectionMatch.Value;
 
-            MatchCollection routeMatches = Regex.Matches(routeSection, @"<a class=""linia.*?>Linia.*?</a>", RegexOptions.Singleline);
+            MatchCollection routeMatches = Regex.Matches(routeSection, @"<a class=""linia.*?>Linia.*?</a>.*?<span style=""color:.*?;"">", RegexOptions.Singleline);
 
             foreach (Match match in routeMatches)
             {
@@ -77,23 +77,40 @@ namespace RatScraper
                 string href = Regex.Match(value, @"href="".*?\""", RegexOptions.Singleline).Value;
                 href = href.Substring(0, href.Length - 1).Substring(href.IndexOf('"') + 1);
 
-                routePages.Add(new KeyValuePair<string, string>(name, @"http://www.ratbv.ro" + href));
+                routePages.Add(new Tuple<string, string, Color>(name, @"http://www.ratbv.ro" + href, Color.White));
             }
-
-            Console.WriteLine("\n" + routePages.Count + " route pages:");
-            foreach (KeyValuePair<string, string> route in routePages)
-                Console.WriteLine(string.Format(" * {0} ({1})", route.Key, route.Value));
 
             for (int iRoutePage = 0; iRoutePage < routePages.Count; iRoutePage++)
             {
-                workBW.ReportProgress(0, @"Downloading and processing " + string.Format("{0} ({1})", routePages[iRoutePage].Key, routePages[iRoutePage].Value) + "...");
-                DecodeTestament(web, database, routePages[iRoutePage], false, false);
+                workBW.ReportProgress(0, @"Downloading and processing " + string.Format("{0} ({1})", routePages[iRoutePage].Item1, routePages[iRoutePage].Item2) + "...");
+                DecodeTestament(client, database, routePages[iRoutePage], false, true);
+            }
+
+            string cssText = GetWebpageText(client, @"http://www.ratbv.ro/css/style.css", Paths.DownloadsFolder + "style.css", false, true);
+            foreach (Route route in database.Routes)
+            {
+                string routeCssMatchRegex = @"\.continut-pagina +a\.linia" + route.ID.ToLowerInvariant() + @":before" + @"(, *\n\.continut-pagina +a\.linia.*?)*" + @" *\{\n *color: *\#.*?; *\n.*?\}";
+                Match routeCssMatch = Regex.Match(cssText, routeCssMatchRegex);
+                if (routeCssMatch.Success)
+                {
+                    string routeCssColor = routeCssMatch.Value.Substring(routeCssMatch.Value.IndexOf('#'));
+                    routeCssColor = routeCssColor.Substring(0, routeCssColor.IndexOf(';'));
+                    route.Color = ColorTranslator.FromHtml(routeCssColor.Substring(0, routeCssColor.Length));
+                }
             }
 
             for (int iS = 0; iS < database.Stops.Count - 1; iS++)
                 for (int jS = iS + 1; jS < database.Stops.Count; jS++)
                     if (database.Stops[iS].Name.CompareTo(database.Stops[jS].Name) > 0)
                         database.Stops.SwapItemsAtPositions(iS, jS);
+
+            for (int iR = 0; iR < database.Routes.Count - 1; iR++)
+                for (int jR = iR + 1; jR < database.Routes.Count; jR++)
+                {
+                    KeyValuePair<int, bool> iID = GetSortableRouteID(database.Routes[iR].ID), jID = GetSortableRouteID(database.Routes[jR].ID);
+                    if (iID.Key == jID.Key ? Convert.ToInt32(iID.Value) > Convert.ToInt32(jID.Value) : iID.Key > jID.Key)
+                        database.Routes.SwapItemsAtPositions(iR, jR);
+                }
 
             workBW.ReportProgress(0, @"Saving database to file...");
             string saveResult = database.SaveDatabase(Paths.DatabaseFile);
@@ -113,6 +130,13 @@ namespace RatScraper
         }
 
         /*      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      */
+
+        private KeyValuePair<int, bool> GetSortableRouteID(string id)
+        {
+            if ("0123456789".Contains(id[id.Length - 1]))
+                return new KeyValuePair<int, bool>(Int32.Parse(id), false);
+            return new KeyValuePair<int, bool>(Int32.Parse(id.Substring(0, id.Length - 1)), true);
+        }
 
         private string GetWebpageText(WebClient client, string url, string filePath, bool forceDownload, bool throwErrors)
         {
@@ -197,88 +221,92 @@ namespace RatScraper
 
         private HalfRoute DecodeOldTestament(WebClient client, Database database, KeyValuePair<string, string> routeInfo, string halfRoutePhase, bool forceDownload, bool throwErrors)
         {
+            /*try
+            {*/
+            workBW.ReportProgress(0, "Downloading " + routeInfo.Key + " (" + halfRoutePhase + ") (old testament)...");
+            if (!Directory.Exists(Paths.DownloadsFolder + routeInfo.Key))
+                Directory.CreateDirectory(Paths.DownloadsFolder + routeInfo.Key);
+
+            string file = null, lineNameCase = null;
+
+            XmlDocument xml = new XmlDocument();
+
             try
             {
-                workBW.ReportProgress(0, "Downloading " + routeInfo.Key + " (" + halfRoutePhase + ") (old testament)...");
-                if (!Directory.Exists(Paths.DownloadsFolder + routeInfo.Key))
-                    Directory.CreateDirectory(Paths.DownloadsFolder + routeInfo.Key);
-
-                string file = null, lineNameCase = null;
-
-                XmlDocument xml = new XmlDocument();
-
-                workBW.ReportProgress(0, "Downloading " + routeInfo.Key + " (" + halfRoutePhase + ") (2) (old testament)...");
-                try
-                {
-                    lineNameCase = routeInfo.Key.Replace("Linia ", "").ToLowerInvariant();
-                    file = GetWebpageText(client,
-                       string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/div_list_ro.html", lineNameCase, halfRoutePhase),
-                       string.Format(@"{0}{1}\{2} stationList.html", Paths.DownloadsFolder, routeInfo.Key, halfRoutePhase), forceDownload, throwErrors);
-                }
-                catch (Exception)
-                {
-                    lineNameCase = routeInfo.Key.Replace("Linia ", "").ToUpperInvariant();
-                    file = GetWebpageText(client,
-                        string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/div_list_ro.html", lineNameCase, halfRoutePhase),
-                        string.Format(@"{0}{1}\{2} stationList.html", Paths.DownloadsFolder, routeInfo.Key, halfRoutePhase), forceDownload, throwErrors);
-                }
-
-                /*string tempText = GetWebpageText(client,
-                    string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}.html", lineNameCase, halfRoutePhase),
-                    string.Format(@"{0}{1}\{2} main.html", Paths.DownloadsFolder, routeInfo.Key, halfRoutePhase), forceDownload, throwErrors);
-                xml.LoadXml(tempText);
-                Match pageTitleMatch = Regex.Match(file, @"<title>Linia.*?directi.*?</title>", RegexOptions.Singleline);
-                xml.LoadXml(pageTitleMatch.Value);
-                string halfRouteName = xml.ChildNodes[0].InnerText.Substring(xml.ChildNodes[0].InnerText.IndexOf("directi") + 9);*/
-
-                workBW.ReportProgress(0, "Downloading " + routeInfo.Key + " (" + halfRoutePhase + ") (3) (old testament)...");
-                List<Tuple<Stop, string>> stopPages = new List<Tuple<Stop, string>>();
-                MatchCollection stopMatches = Regex.Matches(file, @"<a href=""line.*?"" target=""MainFrame"" onclick=.*?>.*?</a>", RegexOptions.Singleline);
-                foreach (Match stopMatch in stopMatches)
-                {
-                    xml.LoadXml(stopMatch.Value);
-                    string stopName = xml.ChildNodes[0].ChildNodes[0].InnerText.Trim();
-                    database.AddUniqueStop(stopName);
-                    Stop stop = database.Stops.GetItemByName(stopName);
-                    stopPages.Add(new Tuple<Stop, string>(stop, string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/{2}", lineNameCase, halfRoutePhase, xml.ChildNodes[0].Attributes["href"].Value)));
-                }
-
-                HalfRoute halfRoute = new HalfRoute(routeInfo.Value);
-                foreach (Tuple<Stop, string> stopPage in stopPages)
-                {
-                    string stopPageText = GetWebpageText(client,
-                        stopPage.Item2,
-                        string.Format(@"{0}Linia {1}\{2} {3}.html", Paths.DownloadsFolder, lineNameCase, halfRoutePhase, stopPage.Item1.ID),
-                        forceDownload, throwErrors);
-
-                    RouteStop routeStop = new RouteStop(stopPage.Item1);
-
-                    /*Match stopTableMatch = Regex.Match(stopPageText, @"<div class=""box tabel-statii"">.*?</div>", RegexOptions.Singleline);
-
-                    xml.LoadXml(stopTableMatch.Value.Replace("&nbsp;", ";").Replace("&nbsp", ";"));
-                    foreach (XmlNode wdcNode in xml.SelectNodes("div/table/thead/tr/td"))
-                        if (!wdcNode.InnerText.Trim().ToUpperInvariant().Equals("ORA"))
-                            stop.WeekDayCategories.Add(new WeekDayCategory(WeekDayCategory.ParseCategoryType(wdcNode.InnerText.Trim())));
-
-                    foreach (XmlNode hourTrNode in xml.SelectNodes("div/table/tr"))
-                    {
-                        XmlNodeList hourTrColumnTds = hourTrNode.SelectNodes("td");
-                        if (hourTrColumnTds.Count != stop.WeekDayCategories.Count + 1)
-                            continue;
-                        int hour = Int32.Parse(hourTrColumnTds[0].InnerText);
-                        for (int iWDC = 0; iWDC < stop.WeekDayCategories.Count; iWDC++)
-                        {
-                            string minutes = hourTrColumnTds[iWDC + 1].InnerText.Replace("\n", "").Replace(" ", "");
-                            foreach (string minute in minutes.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                                stop.WeekDayCategories[iWDC].StopTimes.Add(new StopTime(new TimeSpan(hour, Int32.Parse(minute.Replace("*", "")), 0), minute.Contains('*')));
-                        }
-                    }*/
-
-                    halfRoute.Add(routeStop);
-                }
-
-                return halfRoute;
+                lineNameCase = routeInfo.Key.Replace("Linia ", "").ToLowerInvariant();
+                file = GetWebpageText(client,
+                   string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/div_list_ro.html", lineNameCase, halfRoutePhase),
+                   string.Format(@"{0}{1}\{2} stationList.html", Paths.DownloadsFolder, routeInfo.Key, halfRoutePhase), forceDownload, throwErrors);
             }
+            catch (Exception)
+            {
+                lineNameCase = routeInfo.Key.Replace("Linia ", "").ToUpperInvariant();
+                file = GetWebpageText(client,
+                    string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/div_list_ro.html", lineNameCase, halfRoutePhase),
+                    string.Format(@"{0}{1}\{2} stationList.html", Paths.DownloadsFolder, routeInfo.Key, halfRoutePhase), forceDownload, throwErrors);
+            }
+
+            List<Tuple<Stop, string>> stopPages = new List<Tuple<Stop, string>>();
+            MatchCollection stopMatches = Regex.Matches(file, @"<a href=""line.*?"" target=""MainFrame"" onclick=.*?>.*?</a>", RegexOptions.Singleline);
+            foreach (Match stopMatch in stopMatches)
+            {
+                xml.LoadXml(stopMatch.Value);
+                string stopName = xml.ChildNodes[0].ChildNodes[0].InnerText.Trim();
+                database.AddUniqueStop(stopName);
+                Stop stop = database.Stops.GetItemByName(stopName);
+                stopPages.Add(new Tuple<Stop, string>(stop, string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/{2}", lineNameCase, halfRoutePhase, xml.ChildNodes[0].Attributes["href"].Value)));
+            }
+
+            HalfRoute halfRoute = new HalfRoute(routeInfo.Value);
+            foreach (Tuple<Stop, string> stopPage in stopPages)
+            {
+                string stopPageText = GetWebpageText(client,
+                    stopPage.Item2,
+                    string.Format(@"{0}Linia {1}\{2} {3}.html", Paths.DownloadsFolder, lineNameCase, halfRoutePhase, stopPage.Item1.ID),
+                    forceDownload, throwErrors);
+
+                RouteStop routeStop = new RouteStop(stopPage.Item1);
+
+                Match stopTableMatch = Regex.Match(stopPageText, @"<body>.*</body>", RegexOptions.Singleline);
+                xml.LoadXml(stopTableMatch.Value.Replace("&nbsp;", ";").Replace("&nbsp", ";").Replace("&#355;", "ț").Replace("&#194", "Â").Replace("&#195", "Ă"));
+                XmlNodeList tabel2Nodes = xml.SelectSingleNode("body").SelectSingleNode("div", "id", "header").SelectSingleNode("div", "id", "tabele").ChildNodes;
+
+                foreach (XmlNode tabel2Node in tabel2Nodes)
+                {
+                    string weekdayCategoryString = tabel2Node.SelectSingleNode("div", "id", "web_class_title").InnerText.Trim();
+                    WeekDayCategory weekdayCategory = new WeekDayCategory(WeekDayCategory.ParseCategoryType(weekdayCategoryString));
+
+                    int lastHour = -1;
+                    foreach (XmlNode rowNode in tabel2Node.ChildNodes)
+                    {
+                        if (rowNode.InnerText.ToLowerInvariant().Contains("ora") || rowNode.InnerText.ToLowerInvariant().Contains("minutul"))
+                            continue;
+                        switch (rowNode.Attributes["id"].Value)
+                        {
+                            case "web_class_hours":
+                                lastHour = Int32.Parse(rowNode.InnerText.Trim());
+                                break;
+                            case "web_class_minutes":
+                                if (rowNode.InnerText.Contains("NU CIRCUL"))
+                                    break;
+                                string[] minutesParts = rowNode.InnerText.Trim().Replace(' ', ';').Replace("\n", ";").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                                foreach (string minutePart in minutesParts)
+                                {
+                                    StopTime stopTime = new StopTime(new TimeSpan(lastHour, Int32.Parse(minutePart.Replace("*", "")), 0), minutePart.Contains('*'));
+                                    weekdayCategory.StopTimes.Add(stopTime);
+                                }
+                                break;
+                        }
+                    }
+
+                    routeStop.WeekDayCategories.Add(weekdayCategory);
+                }
+
+                halfRoute.Add(routeStop);
+            }
+
+            return halfRoute;
+            /*}
             catch (Exception E)
             {
                 if (throwErrors)
@@ -286,26 +314,29 @@ namespace RatScraper
                 else
                     Console.WriteLine(E.ToString());
                 return null;
-            }
+            }*/
         }
 
         /*      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      */
 
-        private void DecodeTestament(WebClient client, Database database, KeyValuePair<string, string> routeInfo, bool forceDownload, bool throwErrors)
+        private void DecodeTestament(WebClient client, Database database, Tuple<string, string, Color> routeInfo, bool forceDownload, bool throwErrors)
         {
-            HalfRoute outgoing = routeInfo.Value.Contains("route")
-                ? DecodeNewTestament(client, database, routeInfo, "tour", forceDownload, throwErrors)
-                : DecodeOldTestament(client, database, routeInfo, "dus", forceDownload, throwErrors);
-            HalfRoute incoming = routeInfo.Value.Contains("route")
-                ? DecodeNewTestament(client, database, routeInfo, "retour", forceDownload, throwErrors)
-                : DecodeOldTestament(client, database, routeInfo, "intors", forceDownload, throwErrors);
-            database.Routes.Add(new Route(routeInfo.Key.Substring(routeInfo.Key.IndexOf(' ') + 1), routeInfo.Key, outgoing, incoming));
+            KeyValuePair<string, string> colorless = new KeyValuePair<string, string>(routeInfo.Item1, routeInfo.Item2);
+            HalfRoute outgoing = routeInfo.Item2.Contains("route")
+                ? DecodeNewTestament(client, database, colorless, "tour", forceDownload, throwErrors)
+                : DecodeOldTestament(client, database, colorless, "dus", forceDownload, throwErrors);
+            HalfRoute incoming = routeInfo.Item2.Contains("route")
+                ? DecodeNewTestament(client, database, colorless, "retour", forceDownload, throwErrors)
+                : DecodeOldTestament(client, database, colorless, "intors", forceDownload, throwErrors);
+            database.Routes.Add(new Route(routeInfo.Item1.Substring(routeInfo.Item1.IndexOf(' ') + 1), routeInfo.Item1, routeInfo.Item3, outgoing, incoming));
         }
 
         /*      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      *      */
 
         private void closeT_Tick(object sender, EventArgs e)
         {
+            this.mainForm.stopFilterT_Tick(sender, e);
+            this.mainForm.StopView_Click(null, null);
             this.Close();
         }
     }

@@ -17,8 +17,7 @@ namespace RatScraper.VisualComponents
         {
             this.Cursor = Cursors.Hand;
             this.Font = new Font("Segoe UI", 10);
-
-            this.easingFunction = EasingFunctions.CircularOut;
+            this.SetAnimationParameters(true, EasingFunctions.CircularOut, 400, 20);
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
         }
 
@@ -79,9 +78,9 @@ namespace RatScraper.VisualComponents
 
             if (this.drawBar)
             {
-                e.Graphics.FillRectangle(MyGUIs.Accent.Normal.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.Width - 2, BarHeight.GetValue(this.bigBar));
+                e.Graphics.FillRectangle(this.supportsAnimation ? MyGUIs.Accent.Normal.Brush : MyGUIs.Accent[this.mouseIsOver].Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.Width - 2, BarHeight.GetValue(this.bigBar));
                 if (this.supportsAnimation)
-                    e.Graphics.FillRectangle(MyGUIs.Accent.Highlighted.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), this.animationCurrentPosition, BarHeight.GetValue(this.bigBar));
+                    e.Graphics.FillRectangle(MyGUIs.Accent.Highlighted.Brush, 1, this.Height - BarHeight.GetValue(this.bigBar), (int) this.animationCurrentPosition, BarHeight.GetValue(this.bigBar));
             }
         }
     }
