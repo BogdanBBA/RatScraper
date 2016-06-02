@@ -138,6 +138,17 @@ namespace RatScraper
             return new KeyValuePair<int, bool>(Int32.Parse(id.Substring(0, id.Length - 1)), true);
         }
 
+        private string FixStopName(string name)
+        {
+            while (name.Contains("  "))
+                name = name.Replace("  ", " ");
+            name = name.Trim();
+            if (name.Equals("Judetean"))
+                name = "Spitalul " + name;
+            name = name.Replace("Bratsar", "Brastar");
+            return name;
+        }
+
         private string GetWebpageText(WebClient client, string url, string filePath, bool forceDownload, bool throwErrors)
         {
             try
@@ -179,7 +190,7 @@ namespace RatScraper
             xml.LoadXml(stopListText.Value);
             foreach (XmlNode stopNode in xml.SelectNodes("div/a"))
             {
-                stopPages.Add(new Tuple<string, string, bool>(stopNode.InnerText, @"http://www.ratbv.ro" + stopNode.Attributes["href"].Value, stopNode.Attributes["class"] != null && stopNode.Attributes["class"].Value.Equals("active")));
+                stopPages.Add(new Tuple<string, string, bool>(FixStopName(stopNode.InnerText), @"http://www.ratbv.ro" + stopNode.Attributes["href"].Value, stopNode.Attributes["class"] != null && stopNode.Attributes["class"].Value.Equals("active")));
                 database.AddUniqueStop(stopPages.Last().Item1, GetNewTestamentStationIDFromURL(stopPages.Last().Item2));
             }
 
@@ -251,7 +262,7 @@ namespace RatScraper
             foreach (Match stopMatch in stopMatches)
             {
                 xml.LoadXml(stopMatch.Value);
-                string stopName = xml.ChildNodes[0].ChildNodes[0].InnerText.Trim();
+                string stopName = FixStopName(xml.ChildNodes[0].ChildNodes[0].InnerText.Trim());
                 database.AddUniqueStop(stopName);
                 Stop stop = database.Stops.GetItemByName(stopName);
                 stopPages.Add(new Tuple<Stop, string>(stop, string.Format(@"http://www.ratbv.ro/afisaje/{0}-{1}/{2}", lineNameCase, halfRoutePhase, xml.ChildNodes[0].Attributes["href"].Value)));
@@ -335,8 +346,8 @@ namespace RatScraper
 
         private void closeT_Tick(object sender, EventArgs e)
         {
-            this.mainForm.stopFilterT_Tick(sender, e);
-            this.mainForm.StopView_Click(null, null);
+            this.mainForm.stopFilter1T_Tick(sender, e);
+            this.mainForm.Stop1View_Click(null, null);
             this.Close();
         }
     }

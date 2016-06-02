@@ -430,6 +430,23 @@ namespace RatScraper
             return result;
         }
 
+        public List<HalfRoute> GetHalfRoutesByStops(Stop stopA, Stop stopB)
+        {
+            List<HalfRoute> result = new List<HalfRoute>();
+            foreach (Route route in this.Routes)
+            {
+                int indexA = route.Outgoing.GetIndexOfRouteStopByStop(stopA);
+                int indexB = route.Outgoing.GetIndexOfRouteStopByStop(stopB);
+                if (indexA != -1 && (stopB == null || indexB != -1) && indexA < indexB)
+                    result.Add(route.Outgoing);
+                indexA = route.Incoming.GetIndexOfRouteStopByStop(stopA);
+                indexB = route.Incoming.GetIndexOfRouteStopByStop(stopB);
+                if (indexA != -1 && (stopB == null || indexB != -1) && indexA < indexB)
+                    result.Add(route.Incoming);
+            }
+            return result;
+        }
+
         public List<HalfRoute> GetHalfRoutesByStopName(string stopName)
         {
             List<HalfRoute> result = new List<HalfRoute>();
@@ -443,13 +460,30 @@ namespace RatScraper
             return result;
         }
 
+        public List<HalfRoute> GetHalfRoutesByStopNames(string stopNameA, string stopNameB)
+        {
+            List<HalfRoute> result = new List<HalfRoute>();
+            foreach (Route route in this.Routes)
+            {
+                int indexA = route.Outgoing.GetIndexOfRouteStopByStopName(stopNameA);
+                int indexB = route.Outgoing.GetIndexOfRouteStopByStopName(stopNameB);
+                if (indexA != -1 && (stopNameB == null || indexB != -1) && indexA < indexB)
+                    result.Add(route.Outgoing);
+                indexA = route.Incoming.GetIndexOfRouteStopByStopName(stopNameA);
+                indexB = route.Incoming.GetIndexOfRouteStopByStopName(stopNameB);
+                if (indexA != -1 && (stopNameB == null || indexB != -1) && indexA < indexB)
+                    result.Add(route.Incoming);
+            }
+            return result;
+        }
+
         public List<KeyValuePair<HalfRoute, StopTime>> GetStopTimes(List<HalfRoute> halfRoutes, Stop stop, DateTime moment, TimeSpan duration)
         {
             List<KeyValuePair<HalfRoute, StopTime>> result = new List<KeyValuePair<HalfRoute, StopTime>>();
 
             foreach (HalfRoute halfRoute in halfRoutes)
                 foreach (RouteStop routeStop in halfRoute)
-                    if (routeStop.Stop.Equals(stop))
+                    if (routeStop.Stop.Name.ToUpperInvariant().Equals(stop.Name.ToUpperInvariant()))
                         foreach (WeekDayCategory weekdayCategory in routeStop.WeekDayCategories)
                             if (weekdayCategory.ContainsDate(moment))
                                 foreach (StopTime stopTime in weekdayCategory.StopTimes)

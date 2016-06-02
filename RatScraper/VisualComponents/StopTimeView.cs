@@ -17,21 +17,21 @@ namespace RatScraper.VisualComponents
         public const int AccentBarHeight = 2;
         public const int DefaultControlHeight = 60;
 
-        private KeyValuePair<HalfRoute,StopTime> stopTimeInfo;
-        /*private Font idFont;
-        private Font nameFont;
-        private Font descriptionFont;*/
+        private KeyValuePair<HalfRoute, StopTime> stopTimeInfo;
+        private Font routeIDFont;
+        private Font timeFont;
+        //private Font descriptionFont;
 
         public StopTimeView()
             : base()
         {
-            this.idFont = new Font("Segoe UI", 20, FontStyle.Bold);
-            this.nameFont = new Font("Segoe UI Light", 19, FontStyle.Bold);
-            this.descriptionFont = new Font("Segoe UI Light", 11, FontStyle.Regular);
+            this.routeIDFont = new Font("Segoe UI", 20, FontStyle.Bold);
+            this.timeFont = new Font("Segoe UI Light", 19, FontStyle.Bold);
+            //this.descriptionFont = new Font("Segoe UI Light", 11, FontStyle.Regular);
             this.Cursor = Cursors.Hand;
         }
 
-        public HalfRoute HalfRoute
+        public KeyValuePair<HalfRoute, StopTime> StopTimeInfo
         {
             get { return this.stopTimeInfo; }
             set { this.stopTimeInfo = value; this.Invalidate(); }
@@ -42,26 +42,26 @@ namespace RatScraper.VisualComponents
             base.OnPaint(e);
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-            if (this.stopTimeInfo == null)
+            if (this.stopTimeInfo.Key == null || this.stopTimeInfo.Value == null)
             {
-                e.Graphics.DrawString("[halfRoute == null]", this.Font, MyGUIs.Accent[this.mouseIsOver].Brush, PointF.Empty);
+                e.Graphics.DrawString("[stopTimeInfo invalid]", this.Font, MyGUIs.Accent[this.mouseIsOver].Brush, PointF.Empty);
                 return;
             }
 
             Rectangle idRect = new Rectangle(10, 10, 60, this.Height - 20);
-            e.Graphics.FillRectangle(new SolidBrush(this.stopTimeInfo.Route.Color), idRect);
+            e.Graphics.FillRectangle(new SolidBrush(this.stopTimeInfo.Key.Route.Color), idRect);
 
-            string text = this.stopTimeInfo.Route.ID.ToUpperInvariant();
-            SizeF size = e.Graphics.MeasureString(text, this.idFont);
-            e.Graphics.DrawString(text, this.idFont, MyGUIs.Text.Highlighted.Brush, new PointF(idRect.Left + idRect.Width / 2f - size.Width / 2f, this.Height / 2f - size.Height / 2));
+            string text = this.stopTimeInfo.Key.Route.ID.ToUpperInvariant();
+            SizeF size = e.Graphics.MeasureString(text, this.routeIDFont);
+            e.Graphics.DrawString(text, this.routeIDFont, MyGUIs.Text.Highlighted.Brush, new PointF(idRect.Left + idRect.Width / 2f - size.Width / 2f, this.Height / 2f - size.Height / 2));
 
-            text = this.stopTimeInfo.Name;
-            size = e.Graphics.MeasureString(text, this.nameFont);
-            e.Graphics.DrawString(text, this.nameFont, MyGUIs.Text[this.mouseIsOver].Brush, new PointF(idRect.Right + 7, idRect.Top - 8));
+            text = this.stopTimeInfo.Value.ToString();
+            size = e.Graphics.MeasureString(text, this.timeFont);
+            e.Graphics.DrawString(text, this.timeFont, MyGUIs.Text[this.mouseIsOver].Brush, new PointF(idRect.Right + 7, idRect.Top - 8));
 
-            text = string.Format("{0} {1}", this.stopTimeInfo.Count, this.stopTimeInfo.Count == 1 ? "stop" : "stops");
+            /*text = string.Format("{0} {1}", this.stopTimeInfo.Count, this.stopTimeInfo.Count == 1 ? "stop" : "stops");
             size = e.Graphics.MeasureString(text, this.descriptionFont);
-            e.Graphics.DrawString(text, this.descriptionFont, MyGUIs.Text[this.mouseIsOver].Brush, new PointF(idRect.Right + 10, idRect.Bottom - size.Height + 5));
+            e.Graphics.DrawString(text, this.descriptionFont, MyGUIs.Text[this.mouseIsOver].Brush, new PointF(idRect.Right + 10, idRect.Bottom - size.Height + 5));*/
 
             if (this.isChecked)
                 e.Graphics.FillRectangle(MyGUIs.Accent[!this.mouseIsClicked].Brush, 0, this.Height - HalfRouteView.AccentBarHeight, this.Width, HalfRouteView.AccentBarHeight);
@@ -77,7 +77,7 @@ namespace RatScraper.VisualComponents
         private EventHandler onMouseEnter;
         private EventHandler onMouseLeave;
         private EventHandler onClick;
-        public List<HalfRouteView> HalfRouteViews { get; private set; }
+        public List<StopTimeView> StopTimeViews { get; private set; }
 
         public StopTimeViewManager(Panel containerPanel, EventHandler onMouseEnter, EventHandler onMouseLeave, EventHandler onClick)
             : base()
@@ -86,32 +86,32 @@ namespace RatScraper.VisualComponents
             this.onMouseEnter = onMouseEnter;
             this.onMouseLeave = onMouseLeave;
             this.onClick = onClick;
-            this.HalfRouteViews = new List<HalfRouteView>();
+            this.StopTimeViews = new List<StopTimeView>();
         }
 
-        public void SetHalfRoutes(List<HalfRoute> halfRoutes)
+        public void SetStopTimeInfos(List<KeyValuePair<HalfRoute, StopTime>> stopTimeInfos)
         {
-            for (int iSV = halfRoutes.Count; iSV < this.HalfRouteViews.Count; iSV++)
-                this.HalfRouteViews[iSV].Hide();
+            for (int iSV = stopTimeInfos.Count; iSV < this.StopTimeViews.Count; iSV++)
+                this.StopTimeViews[iSV].Hide();
 
-            for (int iHRV = 0; iHRV < halfRoutes.Count; iHRV++)
+            for (int iHRV = 0; iHRV < stopTimeInfos.Count; iHRV++)
             {
-                HalfRouteView routeView = null;
-                if (iHRV < this.HalfRouteViews.Count)
-                    routeView = this.HalfRouteViews[iHRV];
+                StopTimeView stopTimeView = null;
+                if (iHRV < this.StopTimeViews.Count)
+                    stopTimeView = this.StopTimeViews[iHRV];
                 else
                 {
-                    routeView = new HalfRouteView() { Size = new Size(this.MyScrollPanel.VisibleSize.Width, HalfRouteView.DefaultControlHeight) };
-                    routeView.MouseEnter += this.onMouseEnter;
-                    routeView.MouseLeave += this.onMouseLeave;
-                    routeView.Click += this.onClick;
-                    this.HalfRouteViews.Add(routeView);
-                    this.MyScrollPanel.AddControl(routeView, new Point(0, iHRV * HalfRouteView.DefaultControlHeight), false);
+                    stopTimeView = new StopTimeView() { Size = new Size(this.MyScrollPanel.VisibleSize.Width, StopTimeView.DefaultControlHeight) };
+                    stopTimeView.MouseEnter += this.onMouseEnter;
+                    stopTimeView.MouseLeave += this.onMouseLeave;
+                    stopTimeView.Click += this.onClick;
+                    this.StopTimeViews.Add(stopTimeView);
+                    this.MyScrollPanel.AddControl(stopTimeView, new Point(0, iHRV * StopTimeView.DefaultControlHeight), false);
                 }
 
-                routeView.HalfRoute = halfRoutes[iHRV];
-                routeView.Checked = false;
-                routeView.Show();
+                stopTimeView.StopTimeInfo = stopTimeInfos[iHRV];
+                stopTimeView.Checked = false;
+                stopTimeView.Show();
             }
 
             this.MyScrollPanel.UpdatePanelSize();
